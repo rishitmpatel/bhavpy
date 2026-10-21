@@ -37,8 +37,8 @@ bhavpy update                                 # fetch only the days you don't ha
 ```
 
 The first request for a long range downloads one archive file per trading day for the
-**whole market** (about 2,900 files for 2015 → today, ~15–35 minutes at the polite
-default of 3 requests/s, about 50 MB of cache per year). After that every stock, including
+**whole market** (about 2,900 files for 2015 → today, roughly 30 minutes at the polite
+default of 3 requests/s, about 55 MB of cache per year). After that every stock, including
 delisted ones, is instant and works offline.
 
 ## Why bhavpy

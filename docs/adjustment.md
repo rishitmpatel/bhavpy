@@ -63,7 +63,14 @@ The same table is attached to every adjusted frame as `df.attrs["events"]`.
 | BAJFINANCE | 2025-06-16 | bonus 4:1 **and** split FV 2 → 1 on one day | ≈ −90% | continuous (combined factor 0.1) |
 | RELIANCE | 2023-07-20 | Jio Financial demerger | −9.2% | factor 2,580 / 2,841.85 (price discovery) |
 
-**Whole-index check (run against the full 2015–2026 cache):** for all 50 NIFTY 50 members,
+**Whole-index checks** (`python scripts/validate_adjustment.py "NIFTY 500"`, run on the
+full 2015–2026 cache on 2026-10-21): across the 499 NIFTY 500 members with data, 340
+corporate actions were applied to 211 stocks with **zero price-check mismatches**; one
+overnight jump was flagged as an unexplained gap (FORCEMOT 2024-02-14, a genuine +33%
+results-day move — reported, not applied). The largest adjusted daily moves are all real
+market events (YESBANK 2020-03-06, RPOWER 2019-02-04, POLICYBZR 2026-09-24, ...).
+
+For the NIFTY 50 alone: for all 50 NIFTY 50 members,
 the largest adjusted daily move is the March 2020 COVID crash or a known event-day move
 (e.g. AXISBANK −28% on 2020-03-23) — no split, bonus or rights date shows up as a jump. The
 only ex-dates that needed the demerger estimate were ADANIENT 2015-06-03, TMPV (Tata Motors)

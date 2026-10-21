@@ -17,8 +17,9 @@ otm = chain[((chain.option_type == "PE") & (chain.strike < spot)) |
             ((chain.option_type == "CE") & (chain.strike >= spot))]
 otm = otm[otm.iv > 0]
 
-plt.plot(otm.strike, otm.iv, "o-")
-plt.axvline(spot, ls="--", c="grey")
+for side, leg in otm.groupby("option_type"):       # puts left of spot, calls right
+    plt.plot(leg.strike, leg.iv, "o-", label=side)
+plt.axvline(spot, ls="--", c="grey"); plt.legend()
 plt.xlabel("strike"); plt.ylabel("IV (%)"); plt.title("NIFTY IV smile (NSE IV)")
 ```
 
