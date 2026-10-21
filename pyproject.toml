@@ -1,0 +1,94 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "bhavpy"
+dynamic = ["version"]
+description = "Indian stock market data (NSE + BSE) from public exchange archives, with corporate-action adjusted prices, a local cache and a daily-verified parser suite."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Rishit Patel" }]
+keywords = ["nse", "bse", "india", "stock market", "bhavcopy", "nifty", "quant", "pandas", "options", "corporate actions"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Financial and Insurance Industry",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Office/Business :: Financial :: Investment",
+  "Typing :: Typed",
+]
+dependencies = [
+  "numpy>=1.23",
+  "pandas>=2.0",
+  "requests>=2.28",
+]
+
+[project.optional-dependencies]
+parquet = ["pyarrow>=12"]
+plot = ["matplotlib>=3.6", "scipy>=1.10"]
+dev = [
+  "pytest>=7",
+  "pytest-cov>=4",
+  "ruff>=0.6",
+  "mypy>=1.10",
+  "pandas-stubs",
+  "types-requests",
+]
+docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5", "mkdocstrings[python]>=0.25"]
+
+[project.scripts]
+bhavpy = "bhavpy.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/rishitmpatel/bhavpy"
+Documentation = "https://rishitmpatel.github.io/bhavpy/"
+Issues = "https://github.com/rishitmpatel/bhavpy/issues"
+Changelog = "https://github.com/rishitmpatel/bhavpy/blob/main/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "src/bhavpy/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/bhavpy"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/bhavpy", "tests", "README.md", "LICENSE", "CHANGELOG.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers -m \"not live\""
+markers = ["live: hits real NSE/BSE servers (run with: pytest -m live tests/live)"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "PT", "C4"]
+ignore = ["RUF001", "RUF002", "RUF003", "B008", "PT018", "SIM105"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = false  # pandas-stubs types many DataFrame methods as Any
+warn_unused_ignores = true
+packages = ["bhavpy"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["pyarrow.*", "matplotlib.*", "scipy.*"]
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["bhavpy"]
+omit = ["*/bhavpy/aio.py"]

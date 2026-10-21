@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Add delivery quantity / % (sec_bhavdata_full, 2020 onwards)",
+    "labels": ["good first issue", "enhancement", "new source"],
+    "body": "NSE publishes `https://nsearchives.nseindia.com/products/content/sec_bhavdata_full_DDMMYYYY.csv` (available from 2020-01-02; 2019 returns 404) with `DELIV_QTY` and `DELIV_PER` per symbol.\n\n**Task**\n1. Add `src/bhavpy/sources/nse_delivery.py` (a `DailySource` like `nse_cm.py`) with columns `date, symbol, series, deliv_qty, deliv_pct`.\n2. Save a trimmed real file in `tests/fixtures/` and add a parser test.\n3. Add `bp.delivery(symbol, start, end)` and an optional `delivery=True` flag on `bp.history` that joins the columns.\n4. Add a live test in `tests/live/test_live.py`.\n\nNote: the file has spaces after commas in the header and values; `sources/base.read_csv` already strips them."
+  },
+  {
+    "title": "Extend the bundled NIFTY 50 change log back to 2005",
+    "labels": ["good first issue", "data"],
+    "body": "`src/bhavpy/data/nifty50_changes.csv` covers 2016-04-01 onwards, so `bp.constituents(\"NIFTY 50\", as_of=...)` refuses earlier dates.\n\n**Task**: add the 2005-2016 changes (NSE Indices press releases; the table on https://en.wikipedia.org/wiki/NIFTY_50 lists them with references). Use each security's *latest* NSE ticker in `removed`/`added` and the ticker of the time in `*_then` (see the file header). Then lower `NIFTY50_HISTORY_START` in `indices.py`.\n\n`tests/test_symbols_indices.py::test_nifty50_walk_keeps_fifty_members_at_every_change` will tell you if a row is inconsistent, and the live test checks that every reconstructed member traded on the date."
+  },
+  {
+    "title": "Write a `bp.to_parquet()` helper for exporting the cache by year",
+    "labels": ["good first issue", "enhancement"],
+    "body": "Researchers often want the whole cached market as files. Add `bhavpy.export.to_parquet(directory, start=None, end=None)` that writes `nse_cm/year=YYYY/part.parquet` (decoding the compact storage with `NseCmBhavcopy.from_storage`) and a CLI command `bhavpy export DIR`.\n\npyarrow is an optional extra (`bhavpy[parquet]`), so import it lazily and raise a friendly error if missing. Add a unit test that uses the `offline_http` fixture to fill a temp cache and exports it."
+  },
+  {
+    "title": "Parse the 52-week high/low and price-band files",
+    "labels": ["good first issue", "new source"],
+    "body": "The daily PR zip (`https://nsearchives.nseindia.com/archives/equities/bhavcopy/pr/PRDDMMYY.zip`) contains `hlDDMMYYYY.csv` (new 52-week highs/lows) and `bhDDMMYYYY.csv` (securities that hit price bands). Member names are not consistently capitalised (e.g. `Bc281024.csv`, `bc19102026.csv`), so match case-insensitively.\n\nAdd a source module, fixtures, parser tests and `bp.price_band_hits(day)` / `bp.new_highs_lows(day)`."
+  },
+  {
+    "title": "Docs: add a cookbook recipe for a survivorship-free momentum backtest",
+    "labels": ["good first issue", "documentation"],
+    "body": "Show how to use `bp.universe()` (which includes later-delisted stocks) together with `bp.constituents(\"NIFTY 50\", as_of=...)` to build a monthly-rebalanced 12-1 momentum portfolio without survivorship bias. Add it as `docs/cookbook/momentum.md` and to `mkdocs.yml` nav. Keep runtime reasonable (e.g. 2018-2023) and end with the usual \"not investment advice\" note."
+  }
+]

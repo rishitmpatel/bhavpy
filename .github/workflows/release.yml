@@ -1,0 +1,79 @@
+name: release
+# Publishes to PyPI with trusted publishing (no API token stored anywhere).
+# Trigger either by pushing a tag v1.2.3, or from the Actions tab:
+#   Actions -> release -> Run workflow -> type the tag (e.g. v0.1.0).
+# The tag must match src/bhavpy/_version.py.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Tag to release, e.g. v0.1.0 (must match bhavpy.__version__)"
+        required: true
+
+env:
+  RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.release_tag }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - run: ruff check src tests && mypy && pytest -q
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Version matches tag
+        run: |
+          v=$(python -c "import re;print(re.search(r'\"(.+)\"', open('src/bhavpy/_version.py').read()).group(1))")
+          if [ "v$v" != "$RELEASE_TAG" ]; then echo "tag $RELEASE_TAG != version v$v"; exit 1; fi
+      - run: pip install build twine && python -m build && twine check --strict dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  pypi:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/bhavpy/
+    permissions:
+      id-token: write   # trusted publishing
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+
+  github-release:
+    needs: pypi
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Create GitHub release (creates the tag on this commit for manual runs)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$RELEASE_TAG" dist/* --repo "${{ github.repository }}" \
+            --target "${{ github.sha }}" --title "bhavpy $RELEASE_TAG" --generate-notes

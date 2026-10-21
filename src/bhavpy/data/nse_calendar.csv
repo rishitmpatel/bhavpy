@@ -1,0 +1,331 @@
+date,kind,description
+2005-01-21,holiday,Exchange closed (no bhavcopy published)
+2005-01-26,holiday,Exchange closed (no bhavcopy published)
+2005-03-25,holiday,Exchange closed (no bhavcopy published)
+2005-04-14,holiday,Exchange closed (no bhavcopy published)
+2005-07-28,holiday,Exchange closed (no bhavcopy published)
+2005-08-15,holiday,Exchange closed (no bhavcopy published)
+2005-09-07,holiday,Exchange closed (no bhavcopy published)
+2005-10-12,holiday,Exchange closed (no bhavcopy published)
+2005-11-03,holiday,Exchange closed (no bhavcopy published)
+2005-11-04,holiday,Exchange closed (no bhavcopy published)
+2005-11-15,holiday,Exchange closed (no bhavcopy published)
+2005-11-26,special_session,Special session: weekend session
+2006-01-11,holiday,Exchange closed (no bhavcopy published)
+2006-01-26,holiday,Exchange closed (no bhavcopy published)
+2006-02-09,holiday,Exchange closed (no bhavcopy published)
+2006-03-15,holiday,Exchange closed (no bhavcopy published)
+2006-04-06,holiday,Exchange closed (no bhavcopy published)
+2006-04-11,holiday,Exchange closed (no bhavcopy published)
+2006-04-14,holiday,Exchange closed (no bhavcopy published)
+2006-05-01,holiday,Exchange closed (no bhavcopy published)
+2006-08-15,holiday,Exchange closed (no bhavcopy published)
+2006-10-02,holiday,Exchange closed (no bhavcopy published)
+2006-10-21,special_session,Special session: weekend session
+2006-10-24,holiday,Exchange closed (no bhavcopy published)
+2006-10-25,holiday,Exchange closed (no bhavcopy published)
+2006-12-25,holiday,Exchange closed (no bhavcopy published)
+2007-01-01,holiday,Exchange closed (no bhavcopy published)
+2007-01-26,holiday,Exchange closed (no bhavcopy published)
+2007-01-30,holiday,Exchange closed (no bhavcopy published)
+2007-02-16,holiday,Exchange closed (no bhavcopy published)
+2007-03-27,holiday,Exchange closed (no bhavcopy published)
+2007-04-06,holiday,Exchange closed (no bhavcopy published)
+2007-05-01,holiday,Exchange closed (no bhavcopy published)
+2007-05-02,holiday,Exchange closed (no bhavcopy published)
+2007-08-15,holiday,Exchange closed (no bhavcopy published)
+2007-10-02,holiday,Exchange closed (no bhavcopy published)
+2007-12-21,holiday,Exchange closed (no bhavcopy published)
+2007-12-25,holiday,Exchange closed (no bhavcopy published)
+2008-03-06,holiday,Exchange closed (no bhavcopy published)
+2008-03-20,holiday,Exchange closed (no bhavcopy published)
+2008-03-21,holiday,Exchange closed (no bhavcopy published)
+2008-04-14,holiday,Exchange closed (no bhavcopy published)
+2008-04-18,holiday,Exchange closed (no bhavcopy published)
+2008-05-01,holiday,Exchange closed (no bhavcopy published)
+2008-05-19,holiday,Exchange closed (no bhavcopy published)
+2008-08-15,holiday,Exchange closed (no bhavcopy published)
+2008-09-03,holiday,Exchange closed (no bhavcopy published)
+2008-10-02,holiday,Exchange closed (no bhavcopy published)
+2008-10-09,holiday,Exchange closed (no bhavcopy published)
+2008-10-30,holiday,Exchange closed (no bhavcopy published)
+2008-11-13,holiday,Exchange closed (no bhavcopy published)
+2008-11-27,holiday,Exchange closed (no bhavcopy published)
+2008-12-09,holiday,Exchange closed (no bhavcopy published)
+2008-12-25,holiday,Exchange closed (no bhavcopy published)
+2009-01-08,holiday,Exchange closed (no bhavcopy published)
+2009-01-26,holiday,Exchange closed (no bhavcopy published)
+2009-02-23,holiday,Exchange closed (no bhavcopy published)
+2009-03-10,holiday,Exchange closed (no bhavcopy published)
+2009-03-11,holiday,Exchange closed (no bhavcopy published)
+2009-04-03,holiday,Exchange closed (no bhavcopy published)
+2009-04-07,holiday,Exchange closed (no bhavcopy published)
+2009-04-10,holiday,Exchange closed (no bhavcopy published)
+2009-04-14,holiday,Exchange closed (no bhavcopy published)
+2009-04-30,holiday,Exchange closed (no bhavcopy published)
+2009-05-01,holiday,Exchange closed (no bhavcopy published)
+2009-09-21,holiday,Exchange closed (no bhavcopy published)
+2009-09-28,holiday,Exchange closed (no bhavcopy published)
+2009-10-02,holiday,Exchange closed (no bhavcopy published)
+2009-10-13,holiday,Exchange closed (no bhavcopy published)
+2009-10-17,special_session,Special session: weekend session
+2009-10-19,holiday,Exchange closed (no bhavcopy published)
+2009-11-02,holiday,Exchange closed (no bhavcopy published)
+2009-12-25,holiday,Exchange closed (no bhavcopy published)
+2009-12-28,holiday,Exchange closed (no bhavcopy published)
+2010-01-01,holiday,Exchange closed (no bhavcopy published)
+2010-01-26,holiday,Exchange closed (no bhavcopy published)
+2010-02-06,special_session,Special session: weekend session
+2010-02-12,holiday,Exchange closed (no bhavcopy published)
+2010-03-01,holiday,Exchange closed (no bhavcopy published)
+2010-03-24,holiday,Exchange closed (no bhavcopy published)
+2010-04-02,holiday,Exchange closed (no bhavcopy published)
+2010-04-14,holiday,Exchange closed (no bhavcopy published)
+2010-09-10,holiday,Exchange closed (no bhavcopy published)
+2010-11-17,holiday,Exchange closed (no bhavcopy published)
+2010-12-17,holiday,Exchange closed (no bhavcopy published)
+2011-01-26,holiday,Republic Day
+2011-03-02,holiday,Mahashivratri
+2011-04-12,holiday,Ram Navmi
+2011-04-14,holiday,Dr. Babasaheb Ambedkar Jayanti
+2011-04-22,holiday,Good Friday
+2011-08-15,holiday,Independence Day
+2011-08-31,holiday,Ramzan ID
+2011-09-01,holiday,Ganesh Chaturthi
+2011-10-06,holiday,Dussera
+2011-10-26,special_session,Muhurat trading: Diwali (Laxmi Pujan)*
+2011-10-27,holiday,Diwali (Balipratipada)
+2011-11-07,holiday,Bakri Id
+2011-11-10,holiday,Gurunanak Jayanti
+2011-12-06,holiday,Moharram
+2012-01-07,special_session,Special session: weekend session
+2012-01-26,holiday,Republic Day
+2012-02-20,holiday,Mahashivratri
+2012-03-03,special_session,Special session: weekend session
+2012-03-08,holiday,Holi
+2012-04-05,holiday,Mahavir Jayanti
+2012-04-06,holiday,Good Friday
+2012-05-01,holiday,May Day
+2012-08-15,holiday,Independence Day
+2012-08-20,holiday,Ramzan Id
+2012-09-19,holiday,Ganesh Chaturthi
+2012-10-02,holiday,Gandhi Jayanti
+2012-10-24,holiday,Dasara
+2012-11-11,special_session,Muhurat trading: Dhanteras Trading
+2012-11-14,holiday,Diwali-Balipratipada
+2012-11-28,holiday,Gurunanak Jayanti
+2012-12-25,holiday,Christmas
+2013-03-27,holiday,Holi
+2013-03-29,holiday,Good Friday
+2013-04-19,holiday,Ram Navmi
+2013-04-24,holiday,Mahavir Jayanti
+2013-05-01,holiday,May Day
+2013-08-09,holiday,Ramzan ID
+2013-08-15,holiday,Independence Day
+2013-09-09,holiday,Ganesh Chaturthi
+2013-10-02,holiday,Gandhi Jayanti
+2013-10-16,holiday,Bakri ID
+2013-11-03,special_session,Muhurat trading: Diwali-Laxmi Puja*
+2013-11-04,holiday,Diwali-Balipratipada
+2013-11-15,holiday,Moharram
+2013-12-25,holiday,Christmas
+2014-02-27,holiday,Mahashivratri
+2014-03-17,holiday,Holi
+2014-03-22,special_session,Special session: weekend session
+2014-04-08,holiday,Ram Navmi
+2014-04-14,holiday,Dr. Babasaheb Ambedkar Jayanti
+2014-04-18,holiday,Good Friday
+2014-04-24,holiday,Parlimentary Elections
+2014-05-01,holiday,May Day
+2014-07-29,holiday,Ramzan ID
+2014-08-15,holiday,Independence Day
+2014-08-29,holiday,Ganesh Chaturthi
+2014-10-02,holiday,Mahatma Gandhi Jayanti
+2014-10-03,holiday,Dasera
+2014-10-06,holiday,Bakri ID
+2014-10-15,holiday,General Assembly Elections
+2014-10-24,holiday,Diwali-Balipratipada
+2014-11-04,holiday,Moharram
+2014-11-06,holiday,Gurunank Jayanti
+2014-12-25,holiday,Christmas
+2015-01-26,holiday,Republic Day
+2015-02-17,holiday,Mahashivratri
+2015-02-28,special_session,Muhurat trading: Union Budget
+2015-03-06,holiday,Holi
+2015-04-02,holiday,Mahavir Jayanti
+2015-04-03,holiday,Good Friday
+2015-04-14,holiday,Dr. Baba Saheb Ambedkar Jayanti
+2015-05-01,holiday,Maharashtra Day
+2015-09-17,holiday,Ganesh Chaturthi
+2015-09-25,holiday,Bakri ID
+2015-10-02,holiday,Mahatma Gandhi Jayanti
+2015-10-22,holiday,Dussehra
+2015-11-12,holiday,Diwali-Balipratipada
+2015-11-25,holiday,Gurunanak Jayanti
+2015-12-25,holiday,Christmas
+2016-01-26,holiday,Republic Day
+2016-03-07,holiday,Mahashivratri
+2016-03-24,holiday,Holi
+2016-03-25,holiday,Good Friday
+2016-04-14,holiday,Dr. Baba Saheb Ambedkar Jayanti
+2016-04-15,holiday,Ram Navami
+2016-04-19,holiday,Mahavir Jayanti
+2016-07-06,holiday,Id-uI-Fitar (Ramzan ID)
+2016-08-15,holiday,Independence Day
+2016-09-05,holiday,Ganesh Chaturthi
+2016-09-13,holiday,Bakri ID
+2016-10-11,holiday,Dasera
+2016-10-12,holiday,Moharram
+2016-10-30,special_session,Muhurat trading: Diwali-Laxmi Pujan*
+2016-10-31,holiday,Diwali-Balipratipada
+2016-11-14,holiday,Gurunanak Jayanti
+2017-01-26,holiday,Republic Day
+2017-02-24,holiday,Mahashivratri
+2017-03-13,holiday,Holi
+2017-04-04,holiday,Ram Navami
+2017-04-14,holiday,Dr.Baba Saheb Ambedkar Jayanti/ Good Friday
+2017-05-01,holiday,Maharashtra Day
+2017-06-26,holiday,Id-Ul-Fitr (Ramzan ID)
+2017-08-15,holiday,Independence Day
+2017-08-25,holiday,Ganesh Chaturthi
+2017-10-02,holiday,Mahatama Gandhi Jayanti
+2017-10-20,holiday,Diwali-Balipratipada
+2017-12-25,holiday,Christmas
+2018-01-26,holiday,Republic Day
+2018-02-13,holiday,Mahashivratri
+2018-03-02,holiday,Holi
+2018-03-29,holiday,Mahavir Jayanti
+2018-03-30,holiday,Good Friday
+2018-05-01,holiday,Maharashtra Day
+2018-08-15,holiday,Independence Day
+2018-08-22,holiday,Bakri ID
+2018-09-13,holiday,Ganesh Chaturthi
+2018-09-20,holiday,Moharram
+2018-10-02,holiday,Mahatama Gandhi Jayanti
+2018-10-18,holiday,Dasera
+2018-11-08,holiday,Diwali-Balipratipada
+2018-11-23,holiday,Gurunanak Jayanti
+2018-12-25,holiday,Christmas
+2019-03-04,holiday,Mahashivratri
+2019-03-21,holiday,Holi
+2019-04-17,holiday,Mahavir Jayanti
+2019-04-19,holiday,Good Friday
+2019-04-29,holiday,Parliamentary Elections
+2019-05-01,holiday,Maharashtra Day
+2019-06-05,holiday,Id-Ul-Fitr (Ramzan ID)
+2019-08-12,holiday,Bakri Id
+2019-08-15,holiday,Independence Day
+2019-09-02,holiday,Ganesh Chaturthi
+2019-09-10,holiday,Moharram
+2019-10-02,holiday,Mahatma Gandhi Jayanti
+2019-10-08,holiday,Dasera
+2019-10-21,holiday,General Assembly Elections in Maharashtra
+2019-10-27,special_session,Muhurat trading: Diwali-Laxmi Pujan*
+2019-10-28,holiday,Diwali-Balipratipada
+2019-11-12,holiday,Gurunanak Jayanti
+2019-12-25,holiday,Christmas
+2020-02-01,special_session,Special session: weekend session
+2020-02-21,holiday,Mahashivratri
+2020-03-10,holiday,Holi
+2020-04-02,holiday,Ram Navami
+2020-04-06,holiday,Mahavir Jayanti
+2020-04-10,holiday,Good Friday
+2020-04-14,holiday,Dr.Baba Saheb Ambedkar Jayanti
+2020-05-01,holiday,Maharashtra Day
+2020-05-25,holiday,Id-Ul-Fitr (Ramzan ID)
+2020-10-02,holiday,Mahatma Gandhi Jayanti
+2020-11-14,special_session,Muhurat trading: Diwali-Laxmi Pujan*
+2020-11-16,holiday,Diwali-Balipratipada
+2020-11-30,holiday,Gurunanak Jayanti
+2020-12-25,holiday,Christmas
+2021-01-26,holiday,Republic Day
+2021-03-11,holiday,Mahashivratri
+2021-03-29,holiday,Holi
+2021-04-02,holiday,Good Friday
+2021-04-14,holiday,Dr.Baba Saheb Ambedkar Jayanti
+2021-04-21,holiday,Ram Navami
+2021-05-13,holiday,Id-Ul-Fitr (Ramzan ID)
+2021-07-21,holiday,Bakri Id
+2021-08-19,holiday,Moharram
+2021-09-10,holiday,Ganesh Chaturthi
+2021-10-15,holiday,Dussehra
+2021-11-05,holiday,Diwali-Balipratipada
+2021-11-19,holiday,Gurunanak Jayanti
+2022-01-26,holiday,Republic Day
+2022-03-01,holiday,Mahashivratri
+2022-03-18,holiday,Holi
+2022-04-14,holiday,Dr.Baba Saheb Ambedkar Jayanti/Mahavir Jayanti
+2022-04-15,holiday,Good Friday
+2022-05-03,holiday,Id-Ul-Fitr (Ramzan ID)
+2022-08-09,holiday,Moharram
+2022-08-15,holiday,Independence Day
+2022-08-31,holiday,Ganesh Chaturthi
+2022-10-05,holiday,Dussehra
+2022-10-26,holiday,Diwali-Balipratipada
+2022-11-08,holiday,Gurunanak Jayanti
+2023-01-26,holiday,Republic Day
+2023-03-07,holiday,Holi
+2023-03-30,holiday,Ram Navami
+2023-04-04,holiday,Mahavir Jayanti
+2023-04-07,holiday,Good Friday
+2023-04-14,holiday,Dr. Baba Saheb Ambedkar Jayanti
+2023-05-01,holiday,Maharashtra Day
+2023-06-29,holiday,Bakri Id
+2023-08-15,holiday,Independence Day
+2023-09-19,holiday,Ganesh Chaturthi
+2023-10-02,holiday,Mahatma Gandhi Jayanti
+2023-10-24,holiday,Dussehra
+2023-11-12,special_session,Muhurat trading: Diwali-Laxmi Pujan*
+2023-11-14,holiday,Diwali-Balipratipada
+2023-11-27,holiday,Gurunanak Jayanti
+2023-12-25,holiday,Christmas
+2024-01-20,special_session,Special session: weekend session
+2024-01-22,holiday,Special Holiday
+2024-01-26,holiday,Republic Day
+2024-03-02,special_session,Muhurat trading: Special Live Trading
+2024-03-08,holiday,Mahashivratri
+2024-03-25,holiday,Holi
+2024-03-29,holiday,Good Friday
+2024-04-11,holiday,Id-Ul-Fitr (Ramadan Eid)
+2024-04-17,holiday,Shri Ram Navmi
+2024-05-01,holiday,Maharashtra Day
+2024-05-20,holiday,General Parliamentary Elections
+2024-06-17,holiday,Bakri Id
+2024-07-17,holiday,Moharram
+2024-08-15,holiday,Independence Day
+2024-10-02,holiday,Mahatma Gandhi Jayanti
+2024-11-15,holiday,Prakash Gurpurb Sri Guru Nanak Dev
+2024-11-20,holiday,Assembly Elections in Maharashtra
+2024-12-25,holiday,Christmas
+2025-02-01,special_session,Special session: weekend session
+2025-02-26,holiday,Mahashivratri
+2025-03-14,holiday,Holi
+2025-03-31,holiday,Id-Ul-Fitr (Ramadan Eid)
+2025-04-10,holiday,Shri Mahavir Jayanti
+2025-04-14,holiday,Dr. Baba Saheb Ambedkar Jayanti
+2025-04-18,holiday,Good Friday
+2025-05-01,holiday,Maharashtra Day
+2025-08-15,holiday,Independence Day / Parsi New Year
+2025-08-27,holiday,Shri Ganesh Chaturthi
+2025-10-02,holiday,Mahatma Gandhi Jayanti/Dussehra
+2025-10-21,special_session,Muhurat trading: Diwali Laxmi Pujan
+2025-10-22,holiday,Balipratipada
+2025-11-05,holiday,Prakash Gurpurb Sri Guru Nanak Dev
+2025-12-25,holiday,Christmas
+2026-01-15,holiday,Municipal Corporation Election - Maharashtra
+2026-01-26,holiday,Republic Day
+2026-02-01,special_session,Special session: weekend session
+2026-03-03,holiday,Holi
+2026-03-26,holiday,Shri Ram Navami
+2026-03-31,holiday,Shri Mahavir Jayanti
+2026-04-03,holiday,Good Friday
+2026-04-14,holiday,Dr. Baba Saheb Ambedkar Jayanti
+2026-05-01,holiday,Maharashtra Day
+2026-05-28,holiday,Bakri Id
+2026-06-26,holiday,Muharram
+2026-09-14,holiday,Ganesh Chaturthi
+2026-10-02,holiday,Mahatma Gandhi Jayanti
+2026-10-20,holiday,Dussehra
+2026-11-10,holiday,Diwali-Balipratipada
+2026-11-24,holiday,Prakash Gurpurb Sri Guru Nanak Dev
+2026-12-25,holiday,Christmas

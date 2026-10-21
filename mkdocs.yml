@@ -1,0 +1,53 @@
+site_name: bhavpy
+site_description: Indian stock market data (NSE + BSE) from public exchange archives
+site_url: https://rishitmpatel.github.io/bhavpy/
+repo_url: https://github.com/rishitmpatel/bhavpy
+repo_name: rishitmpatel/bhavpy
+edit_uri: edit/main/docs/
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep orange
+      toggle: {icon: material/weather-night, name: Dark mode}
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep orange
+      toggle: {icon: material/weather-sunny, name: Light mode}
+markdown_extensions:
+  - admonition
+  - tables
+  - toc: {permalink: true}
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: false
+            docstring_style: numpy
+            members_order: source
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Adjusted prices: adjustment.md
+  - Command line: cli.md
+  - Cookbook:
+      - NIFTY 50 history: cookbook/nifty50-history.md
+      - Adjusted returns: cookbook/adjusted-returns.md
+      - Moving-average backtest: cookbook/sma-backtest.md
+      - Option chain to IV smile: cookbook/iv-smile.md
+  - Reliability: reliability.md
+  - Research & sources: research.md
+  - API reference: api.md
+  - Disclaimer: disclaimer.md

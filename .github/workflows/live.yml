@@ -1,0 +1,79 @@
+name: Live sources
+# Hits the real NSE/BSE servers once a day. If any source changed its URL or format,
+# opens (or updates) an issue labelled "source-broken"; closes it again once green.
+on:
+  schedule:
+    - cron: "17 2 * * *"   # 07:47 IST, after the previous trading day's files are out
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - name: Run live tests
+        id: live
+        continue-on-error: true
+        run: pytest -m live tests/live -v --junitxml=live.xml -p no:cacheprovider 2>&1 | tee live.log
+        shell: bash
+      - name: Summarise failures
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import xml.etree.ElementTree as ET, pathlib
+          p = pathlib.Path("live.xml")
+          lines = []
+          if p.exists():
+              for case in ET.parse(p).iter("testcase"):
+                  for tag in ("failure", "error"):
+                      el = case.find(tag)
+                      if el is not None:
+                          msg = (el.get("message") or "").strip().splitlines()[:3]
+                          lines.append(f"- `{case.get('name')}`: {' '.join(msg)[:400]}")
+          pathlib.Path("failures.md").write_text("\n".join(lines))
+          print("\n".join(lines) or "all live tests passed")
+          PY
+      - name: Open or update issue on failure
+        if: steps.live.outcome == 'failure'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const failures = fs.existsSync('failures.md') ? fs.readFileSync('failures.md', 'utf8') : '';
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `The daily live check against NSE/BSE failed on ${new Date().toISOString().slice(0, 10)}.\n\n` +
+              `${failures || '(see the run log)'}\n\nRun: ${run}\n\n` +
+              `A source probably changed its URL or file layout. Each source lives in one file under ` +
+              '`src/bhavpy/sources/`; see CONTRIBUTING.md → "Fixing a source".';
+            const { data: open } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'source-broken,automated', per_page: 1 });
+            if (open.length) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: open[0].number, body });
+            } else {
+              await github.rest.issues.create({ ...context.repo,
+                title: 'Live source check failed', body, labels: ['source-broken', 'automated'] });
+            }
+            core.setFailed('live tests failed');
+      - name: Close issue when green again
+        if: steps.live.outcome == 'success'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { data: open } = await github.rest.issues.listForRepo({
+              ...context.repo, state: 'open', labels: 'source-broken,automated' });
+            for (const issue of open) {
+              await github.rest.issues.createComment({ ...context.repo, issue_number: issue.number,
+                body: 'Live checks pass again; closing.' });
+              await github.rest.issues.update({ ...context.repo, issue_number: issue.number,
+                state: 'closed', state_reason: 'completed' });
+            }
