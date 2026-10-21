@@ -48,6 +48,7 @@ nav:
       - Moving-average backtest: cookbook/sma-backtest.md
       - Option chain to IV smile: cookbook/iv-smile.md
   - Reliability: reliability.md
+  - Roadmap: roadmap.md
   - Research & sources: research.md
   - API reference: api.md
   - Disclaimer: disclaimer.md

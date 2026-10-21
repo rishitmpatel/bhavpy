@@ -60,7 +60,9 @@ def raw_history(
         e = min(end, seg.end - dt.timedelta(days=1)) if seg.end else end
         if s > e:
             continue
-        frames.append(store.read_range(CM, s, e, "symbol = ?", (seg.symbol,)))
+        got = store.read_range(CM, s, e, "symbol = ?", (seg.symbol,))
+        if not got.empty:  # empty frames have object dtypes and would poison the concat
+            frames.append(got)
     df = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["date", *PRICE_COLUMNS])
     if series:
         df = df[df["series"].isin(list(series))]
@@ -82,7 +84,7 @@ def history(
     series: Sequence[str] | None = None,
     infer: bool | None = None,
     on_mismatch: str = "skip",
-    demerger: str = "ignore",
+    demerger: str = "estimate",
 ) -> pd.DataFrame:
     """Daily OHLCV for an NSE stock (or index) from the official bhavcopy archive.
 
@@ -97,6 +99,9 @@ def history(
         ``"split"`` (default) adjusts for splits, bonuses, consolidations and rights;
         ``"total"`` also for dividends (use for return calculations); ``None`` = raw only.
         Adjusted prices are expressed in the share terms of the **last row** returned.
+    demerger:
+        ``"estimate"`` (default) adjusts demergers/schemes using the ex-date price
+        discovery (flagged ``check="estimated"``); ``"ignore"`` leaves them unadjusted.
     series:
         Restrict to series, e.g. ``["EQ"]``. Default picks the best series per day
         (EQ, then BE, BZ, ...), so stocks moved to trade-to-trade stay continuous.
@@ -143,7 +148,7 @@ def factors(
     adjust: str = "split",
     infer: bool | None = None,
     on_mismatch: str = "skip",
-    demerger: str = "ignore",
+    demerger: str = "estimate",
 ) -> pd.DataFrame:
     """The adjustment-factor table behind :func:`history` (one row per event).
 

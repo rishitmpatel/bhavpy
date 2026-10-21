@@ -12,6 +12,21 @@ CASES = [
     ("Bonus 1:1", [Event("bonus", 1, 1)]),
     (" Bonus 1:2", [Event("bonus", 1, 2)]),
     ("Bonus 4: 1", [Event("bonus", 4, 1)]),
+    ("Bonus- 1:2", [Event("bonus", 1, 2)]),
+    ("Bonus Shares In The Ratio Of 1:1", [Event("bonus", 1, 1)]),
+    ("Bonus Debentures 1:1", []),  # not equity: no dilution
+    ("Bonus Preference Shares 21:1", []),
+    ("Annual General Meetingdividend - Rs 2.5 Per Share", [Event("dividend", amount=2.5)]),
+    ("Intdiv-Rs 3persh/Bonus1:1", [Event("bonus", 1, 1), Event("dividend", amount=3.0)]),
+    (
+        "Int.Div70%/Rght1:5@Rs.500purpose Revised",
+        [Event("rights", 1, 5, 500.0), Event("dividend", amount=7.0)],
+    ),
+    (
+        "Annual General Meeting / Dividend - Rs 3/- Per Share / Bonus - 1:2",
+        [Event("bonus", 1, 2), Event("dividend", amount=3.0)],
+    ),
+    ("Rights - 1:4 @ Premium Rs 90/-", [Event("rights", 1, 4, 100.0)]),
     (
         "Face Value Split (Sub-Division) - From Rs 10/- Per Share To Rs 2/- Per Share",
         [Event("split", 10, 2)],
@@ -46,6 +61,8 @@ CASES = [
     ("Dividend 50%", [Event("dividend", amount=5.0)]),  # with face value 10
     ("Distribution - Rs 2.10 Per Unit", [Event("dividend", amount=2.1)]),
     ("Demerger", [Event("demerger")]),
+    ("Scheme Of Arrangement", [Event("scheme_of_arrangement")]),
+    ("Sch Of Agmt- Bonus Deb1:1", [Event("scheme_of_arrangement")]),
     ("Annual General Meeting", []),
     ("Interest Payment", []),
     ("Buy Back", []),

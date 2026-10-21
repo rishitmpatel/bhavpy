@@ -10,6 +10,7 @@ SQLite ships with Python, works the same on Linux/macOS/Windows and needs no ser
 
 from __future__ import annotations
 
+import atexit
 import datetime as dt
 import sqlite3
 import threading
@@ -71,7 +72,15 @@ def connect() -> sqlite3.Connection:
         )
     _local.con = con
     _local.path = p
+    atexit.register(_close, con)
     return con
+
+
+def _close(con: sqlite3.Connection) -> None:
+    try:
+        con.close()
+    except sqlite3.Error:  # pragma: no cover
+        pass
 
 
 def reset() -> None:
@@ -210,7 +219,9 @@ def info() -> dict[str, Any]:
 def vacuum() -> None:
     """Compact the database file after large deletions."""
     with _write_lock:
-        connect().execute("VACUUM")
+        con = connect()
+        con.execute("VACUUM")
+        con.execute("PRAGMA wal_checkpoint(TRUNCATE)")
 
 
 def clear(dataset: str | None = None) -> None:

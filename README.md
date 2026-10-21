@@ -38,7 +38,7 @@ bhavpy update                                 # fetch only the days you don't ha
 
 The first request for a long range downloads one archive file per trading day for the
 **whole market** (about 2,900 files for 2015 → today, ~15–35 minutes at the polite
-default of 3 requests/s, ~45 MB of cache per year). After that every stock, including
+default of 3 requests/s, about 50 MB of cache per year). After that every stock, including
 delisted ones, is instant and works offline.
 
 ## Why bhavpy
@@ -68,8 +68,8 @@ Free sources often get Indian corporate actions wrong (bonuses, rights, demerger
 don't tell you what they did. bhavpy:
 
 1. takes ratios from **NSE's corporate-actions feed** (split FV 10→2, bonus 1:1, rights 1:15 @ ₹1,257 …),
-2. converts them to factors (split `new/old`, bonus `b/(a+b)`, rights via theoretical ex-rights price, dividends `(P−D)/P` in `adjust="total"`),
-3. **checks each split/bonus against the actual overnight price move** and refuses to apply records the market contradicts,
+2. converts them to factors (split `new/old`, bonus `b/(a+b)`, rights via theoretical ex-rights price, demergers via NSE's ex-date price discovery, dividends `(P−D)/P` in `adjust="total"`),
+3. **checks every split/bonus ex-date against the actual overnight price move** (combined, when a split and bonus share a date) and refuses to apply records the market contradicts,
 4. flags split-like price gaps that have no record (`unexplained_gap`),
 5. returns raw *and* adjusted columns plus `df.attrs["events"]`.
 

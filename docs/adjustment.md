@@ -15,7 +15,7 @@ and older prices are expressed in today's share terms (relative to the last row 
 | `Bonus a:b` (a new for every b held) | b / (a + b) | 1:1 → 0.5, 1:2 → 0.667 |
 | `Rights a:b @ Premium Rs P` | TERP / P<sub>cum</sub>, TERP = (b·P<sub>cum</sub> + a·S)/(a+b), S = P + face value | RELIANCE 2020: 0.9906 |
 | Dividend `Rs D` (only `adjust="total"`) | (P<sub>cum</sub> − D) / P<sub>cum</sub> | CRSP-style total return |
-| Demerger / capital reduction | not adjusted by default (`demerger="estimate"` uses ex-day open / cum close) | |
+| Demerger / scheme of arrangement | estimated: ex-day price-discovery open / P<sub>cum</sub> (close if the open was stale); `check="estimated"`. `demerger="ignore"` leaves it unadjusted | RELIANCE 2023 (Jio Financial): 0.908 |
 
 P<sub>cum</sub> is the last close before the ex-date. Volumes are scaled by the inverse
 factor for splits, consolidations and bonuses.
@@ -34,10 +34,10 @@ to infer adjustments (see [research](research.md#an-important-finding-for-adjust
 ## Checks
 
 * **Price check.** For splits, bonuses and consolidations bhavpy compares the expected
-  factor with the actual overnight move `open(ex-date) / close(day before)`. If they differ
+  factor (all such events on one ex-date multiplied together) with the actual overnight move `open(ex-date) / close(day before)`. If they differ
   by more than 25%, the record is marked `check="mismatch"`, **not applied**, and a warning
   is raised. Pass `on_mismatch="apply"` to apply it anyway.
-* **Gap scan.** Overnight moves of more than −33%/+50% that match a common split/bonus
+* **Gap scan.** Overnight moves beyond −23%/+30% that match a common split/bonus
   ratio within 6% but have no record are reported as `kind="unexplained_gap"`. They are
   applied only with `infer=True` — or automatically if the corporate-actions feed could not
   be reached, so adjustment still works when NSE's site is down.
@@ -60,5 +60,13 @@ The same table is attached to every adjusted frame as `df.attrs["events"]`.
 | SHRIRAMFIN | 2025-01-10 | split FV 10 → 2 | −81.1% | −5.3% |
 | RELIANCE | 2020-05-13 | rights 1:15 @ ₹1,257 | | factor 0.9906 (TERP) |
 | RELIANCE | 2026-06-05 | dividend ₹6 (`total`) | | factor (P−6)/P |
+| BAJFINANCE | 2025-06-16 | bonus 4:1 **and** split FV 2 → 1 on one day | ≈ −90% | continuous (combined factor 0.1) |
+| RELIANCE | 2023-07-20 | Jio Financial demerger | −9.2% | factor 2,580 / 2,841.85 (price discovery) |
+
+**Whole-index check (run against the full 2015–2026 cache):** for all 50 NIFTY 50 members,
+the largest adjusted daily move is the March 2020 COVID crash or a known event-day move
+(e.g. AXISBANK −28% on 2020-03-23) — no split, bonus or rights date shows up as a jump. The
+only ex-dates that needed the demerger estimate were ADANIENT 2015-06-03, TMPV (Tata Motors)
+2025-10-14, RELIANCE 2023-07-20, ITC 2025-01-06 and HINDUNILVR 2025-12-05.
 
 The live suite repeats the RELIANCE 2024 check against the real servers every day.

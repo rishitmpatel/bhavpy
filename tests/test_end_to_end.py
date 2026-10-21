@@ -129,3 +129,9 @@ def test_cli_reports_errors_cleanly(offline_http: FakeServer, capsys: pytest.Cap
     code = cli.main(["-q", "download", "NOSUCHSTOCK", "--from", "2017-09-06", "--to", "2017-09-07"])
     assert code == 2
     assert "SymbolNotFound" in capsys.readouterr().err
+
+
+def test_renamed_symbol_with_empty_segment_keeps_float_prices(offline_http: FakeServer) -> None:
+    # ETERNAL's chain is ZOMATO -> ETERNAL; only the post-rename day exists in the fixtures.
+    df = bp.history("ETERNAL", "2026-10-19", "2026-10-19", adjust=None)
+    assert df["close"].dtype.kind == "f"

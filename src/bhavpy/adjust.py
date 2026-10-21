@@ -64,6 +64,9 @@ EVENT_COLUMNS = [
 #: Tolerance for the price check of split/bonus factors.
 CHECK_TOLERANCE = 0.25
 
+#: Actions that change the share count (price-checked, volumes rescaled).
+_SHARE_KINDS = ("split", "consolidation", "bonus")
+
 
 # --------------------------------------------------------------------------- data
 
@@ -101,12 +104,10 @@ def corporate_actions(symbol: str, *, refresh: bool = False) -> pd.DataFrame:
     for seg in chain:
         ok &= _fetch_actions(seg.symbol, refresh)
         rows = cache.query("SELECT * FROM corp_actions WHERE symbol = ?", (seg.symbol,))
-        # A ticker can be reused by another company later: keep only records from the
-        # window in which this security used it (an ex-date on the rename day may be
-        # filed under either ticker, so both ends are inclusive).
-        if seg.start is not None:
-            rows = rows[rows["ex_date"] >= seg.start.isoformat()]
-        if seg.end is not None:
+        # NSE files a security's whole history under its *current* ticker, but an old
+        # ticker may later be reused by another company: drop records of a former
+        # ticker dated after this security stopped using it.
+        if seg.end is not None and seg is not chain[-1]:
             rows = rows[rows["ex_date"] <= seg.end.isoformat()]
         frames.append(rows)
     df = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=list(ca_src.COLUMNS))
@@ -127,16 +128,31 @@ def _ratio_text(ev: ca_src.Event) -> str:
     return ""
 
 
-def _cum_close(prices: pd.DataFrame, ex: pd.Timestamp) -> tuple[float | None, float | None]:
-    """(last close before ex, first open on/after ex)."""
+def _cum_close(prices: pd.DataFrame, ex: pd.Timestamp) -> tuple[float | None, float | None, float | None]:
+    """(last close before ex, first open on/after ex, first close on/after ex)."""
     before = prices.loc[prices.index < ex, "close"].dropna()
     after = prices.loc[prices.index >= ex]
     p = float(before.iloc[-1]) if len(before) else None
-    o = None
+    o = c = None
     if len(after):
         row = after.iloc[0]
-        o = float(row["open"]) if pd.notna(row.get("open")) and row.get("open") else float(row["close"])
-    return p, o
+        c = float(row["close"])
+        o = float(row["open"]) if pd.notna(row.get("open")) and row.get("open") else c
+    return p, o, c
+
+
+def _demerger_factor(p: float | None, o: float | None, c: float | None) -> float | None:
+    """Estimate the value left in the parent after a demerger.
+
+    Since ~2018 NSE runs a special pre-open session on the ex-date, so the ex-day open is
+    the discovered parent price (RELIANCE 2023-07-20 opened at 2,580 after JIO FIN).
+    Older ex-dates sometimes opened at the stale price and fell during the day; when the
+    close is >25% away from the open, the close is the better estimate.
+    """
+    if not (p and o and c):
+        return None
+    est = c if abs(math.log(c / o)) > math.log(1.25) else o
+    return est / p if 0 < est < p else None
 
 
 def _candidate_ratios() -> np.ndarray:
@@ -156,7 +172,7 @@ def build_events(
     mode: str = "split",
     infer: bool | None = None,
     on_mismatch: str = "skip",
-    demerger: str = "ignore",
+    demerger: str = "estimate",
 ) -> pd.DataFrame:
     """Turn corporate-action records + raw prices into an auditable factor table.
 
@@ -164,7 +180,7 @@ def build_events(
     ``mode``: ``"split"`` (splits, bonuses, rights) or ``"total"`` (also dividends).
     ``infer``: apply split-like price gaps with no record (None = only if feed failed).
     ``on_mismatch``: ``"skip"`` or ``"apply"`` records the price check contradicts.
-    ``demerger``: ``"ignore"`` or ``"estimate"`` (factor = ex-day open / cum close).
+    ``demerger``: ``"estimate"`` (default; see :func:`_demerger_factor`) or ``"ignore"``.
     """
     tz = prices.index.tz if isinstance(prices.index, pd.DatetimeIndex) else None
     rows: list[dict[str, object]] = []
@@ -176,7 +192,7 @@ def build_events(
         for ev in ca_src.parse_subject(str(rec["subject"]), face_value):
             if ev.kind == "dividend" and mode != "total":
                 continue
-            p, o = _cum_close(prices, ex)
+            p, o, c = _cum_close(prices, ex)
             pf: float | None = None
             vf = 1.0
             check = "ok"
@@ -207,21 +223,14 @@ def build_events(
                     check = "dividend_exceeds_price"
                 else:
                     pf = (p - ev.amount) / p
-            elif ev.kind in ("demerger", "capital_reduction"):
-                if demerger == "estimate" and p and o and 0 < o < p:
-                    pf, check = o / p, "estimated"
+            elif ev.kind in ("demerger", "scheme_of_arrangement", "capital_reduction"):
+                est = _demerger_factor(p, o, c) if demerger == "estimate" else None
+                if est is not None:
+                    pf, check = est, "estimated"
                 else:
                     check = "not_adjusted"
-            if pf is not None and ev.kind in ("split", "consolidation", "bonus") and p and o:
-                observed = o / p
-                if not (1 - CHECK_TOLERANCE) < observed / pf < 1 / (1 - CHECK_TOLERANCE):
-                    check = "mismatch"
-            elif pf is not None and ev.kind in ("split", "consolidation", "bonus") and not (p and o):
+            if pf is not None and ev.kind in _SHARE_KINDS and not (p and o):
                 check = "no_price_data" if (p or o) else "outside_range"
-            applied = pf is not None and (
-                check in ("ok", "estimated", "no_price_data", "outside_range")
-                or (check == "mismatch" and on_mismatch == "apply")
-            )
             rows.append(
                 {
                     "ex_date": ex,
@@ -229,26 +238,45 @@ def build_events(
                     "ratio": _ratio_text(ev),
                     "amount": ev.amount,
                     "price_factor": pf if pf is not None else 1.0,
-                    "volume_factor": vf if applied else 1.0,
-                    "applied": applied,
+                    "volume_factor": vf,
+                    "applied": pf is not None,
                     "check": check,
                     "source": "nse_corporate_actions",
                     "description": str(rec["subject"]),
+                    "_observed": (o / p) if (p and o) else np.nan,
                 }
             )
-    events = pd.DataFrame(rows, columns=EVENT_COLUMNS)
+    events = pd.DataFrame(rows, columns=[*EVENT_COLUMNS, "_observed"])
     if not events.empty:
         events = events.drop_duplicates(subset=["ex_date", "kind", "ratio", "amount"])
+        # Price check per ex-date on the *combined* share-count factor (a split and a
+        # bonus often share an ex-date, e.g. BAJFINANCE 2016-09-08 and 2025-06-16).
+        share = events[events["kind"].isin(_SHARE_KINDS) & events["applied"]]
+        for _, grp in share.groupby("ex_date"):
+            observed = grp["_observed"].iloc[0]
+            if pd.isna(observed):
+                continue
+            ratio = observed / grp["price_factor"].prod()
+            if not (1 - CHECK_TOLERANCE) < ratio < 1 / (1 - CHECK_TOLERANCE):
+                events.loc[grp.index, "check"] = "mismatch"
+        ok = events["check"].isin(["ok", "estimated", "no_price_data", "outside_range"])
+        if on_mismatch == "apply":
+            ok |= events["check"] == "mismatch"
+        events["applied"] = events["applied"] & ok
+        events.loc[~events["applied"], "volume_factor"] = 1.0
+    events = events.drop(columns="_observed")
 
     # Gap scan for split-like moves with no record.
     feed_ok = bool(actions.attrs.get("feed_ok", True))
     apply_inferred = (not feed_ok) if infer is None else infer
     gaps = _scan_gaps(prices, events)
     if not gaps.empty:
-        gaps["applied"] = apply_inferred
+        gaps["applied"] = apply_inferred & (gaps["check"] == "inferred")
         gaps.loc[~gaps["applied"], "volume_factor"] = 1.0
         events = pd.concat([events, gaps], ignore_index=True) if not events.empty else gaps
     events = events.sort_values("ex_date").reset_index(drop=True)
+    events["applied"] = events["applied"].astype(bool)
+    events["ex_date"] = pd.to_datetime(events["ex_date"], utc=True).dt.tz_convert(tz or "Asia/Kolkata")
     bad = events[events["check"] == "mismatch"]
     if len(bad):
         warnings.warn(
@@ -266,7 +294,7 @@ def _scan_gaps(prices: pd.DataFrame, events: pd.DataFrame) -> pd.DataFrame:
     close = prices["close"].astype(float)
     opn = prices["open"].astype(float).where(prices["open"] > 0, close)
     ratio = (opn / close.shift(1)).iloc[1:]
-    big = ratio[(ratio < 0.67) | (ratio > 1.5)].dropna()
+    big = ratio[(ratio < 0.77) | (ratio > 1.3)].dropna()
     known = pd.DatetimeIndex(events["ex_date"]) if not events.empty else pd.DatetimeIndex([])
     rows = []
     for ts, r in big.items():
@@ -274,6 +302,23 @@ def _scan_gaps(prices: pd.DataFrame, events: pd.DataFrame) -> pd.DataFrame:
             continue
         cand = _CANDIDATES[np.argmin(np.abs(np.log(_CANDIDATES) - math.log(r)))]
         if abs(math.log(r / cand)) > math.log(1.06):
+            if abs(math.log(r)) > math.log(1.5):
+                # Too big for normal trading and not a split/bonus ratio: likely an
+                # unrecorded demerger or scheme. Reported, never applied.
+                rows.append(
+                    {
+                        "ex_date": ts,
+                        "kind": "unexplained_gap",
+                        "ratio": "?",
+                        "amount": None,
+                        "price_factor": float(r),
+                        "volume_factor": 1.0,
+                        "applied": False,
+                        "check": "unknown_ratio",
+                        "source": "price_gap",
+                        "description": f"overnight open/prev close = {r:.4f}; no record, no standard ratio",
+                    }
+                )
             continue
         rows.append(
             {

@@ -63,19 +63,29 @@ def _store(source: DailySource, day: dt.date, df: pd.DataFrame) -> int:
 
 
 class _Progress:
+    """One self-updating line on a terminal; a line every 10% elsewhere (CI, logs)."""
+
     def __init__(self, label: str, total: int) -> None:
         self.label, self.total, self.done, self.t0 = label, total, 0, time.monotonic()
         self.enabled = settings.progress and total > 3 and sys.stderr is not None
+        self.tty = self.enabled and sys.stderr.isatty()
+        self.next_pct = 10
 
     def step(self) -> None:
         self.done += 1
-        if self.enabled and (self.done == self.total or self.done % 5 == 0):
-            rate = self.done / max(time.monotonic() - self.t0, 1e-6)
-            eta = (self.total - self.done) / max(rate, 1e-6)
-            sys.stderr.write(f"\r[bhavpy] {self.label}: {self.done}/{self.total} days  (~{eta:0.0f}s left) ")
-            sys.stderr.flush()
-            if self.done == self.total:
-                sys.stderr.write("\n")
+        if not self.enabled:
+            return
+        rate = self.done / max(time.monotonic() - self.t0, 1e-6)
+        eta = (self.total - self.done) / max(rate, 1e-6)
+        msg = f"[bhavpy] {self.label}: {self.done}/{self.total} days (~{eta:0.0f}s left)"
+        if self.tty:
+            if self.done == self.total or self.done % 5 == 0:
+                end = "\n" if self.done == self.total else ""
+                sys.stderr.write(f"\r{msg} {end}")
+                sys.stderr.flush()
+        elif self.done * 100 >= self.next_pct * self.total:
+            sys.stderr.write(msg + "\n")
+            self.next_pct += 10
 
 
 def ensure(source: DailySource, days: list[dt.date]) -> dict[str, int]:

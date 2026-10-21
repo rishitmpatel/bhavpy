@@ -82,7 +82,7 @@ class Event:
     """One price-relevant action parsed from a subject.
 
     ``kind``: ``split`` | ``consolidation`` | ``bonus`` | ``rights`` | ``dividend`` |
-    ``demerger`` | ``capital_reduction``.
+    ``demerger`` | ``scheme_of_arrangement`` | ``capital_reduction``.
     ``a``/``b``: ratio terms (bonus/rights: *a* new for every *b* held; split: FV *a* -> *b*).
     ``amount``: rupees per share (dividend) or issue price (rights).
     """
@@ -96,18 +96,23 @@ class Event:
 _NUM = r"(\d+(?:\.\d+)?)"
 _RS = r"(?:rs|re|inr|₹)?\s*\.?\s*"
 _DIV = re.compile(
-    r"(?:\bdiv\w*|distribution)[^0-9%]*?" + _RS + _NUM + r"\s*(%)?",
+    r"(?:div\w*?|distribution)[^0-9%]*?" + _RS + _NUM + r"\s*(%)?",
     re.I,
 )
-_BONUS = re.compile(r"bonus\s*(?:issue)?\s*" + _NUM + r"\s*:\s*" + _NUM, re.I)
+_BONUS = re.compile(
+    r"bonus[\s-]*(?:issue|shares?\s+in\s+the\s+ratio\s+of)?[\s-]*" + _NUM + r"\s*:\s*" + _NUM, re.I
+)
 _SPLIT = re.compile(
     r"(?:split|splt|sub-?\s*division)[^0-9]*?" + _RS + _NUM + r"[^0-9]*?\bto\b\s*" + _RS + _NUM,
     re.I,
 )
 _CONSOL = re.compile(r"consolidat\w*[^0-9]*?" + _RS + _NUM + r"[^0-9]*?\bto\b\s*" + _RS + _NUM, re.I)
-_RIGHTS = re.compile(r"rights?[-\s]*(?:issue|eq)?\s*" + _NUM + r"\s*:\s*" + _NUM, re.I)
+_RIGHTS = re.compile(r"(?:rights?|rght)[-\s]*(?:issue|eq)?[-\s]*" + _NUM + r"\s*:\s*" + _NUM, re.I)
 _PREMIUM = re.compile(r"premium\s*(?:of\s*)?" + _RS + _NUM, re.I)
 _AT_PRICE = re.compile(r"@\s*(?:rs|re|inr|₹)\s*\.?\s*" + _NUM, re.I)
+
+
+_SCHEME_WORDS = ("scheme of arrangement", "scheme of arangement", "sch of agmt")
 
 
 def parse_subject(subject: str, face_value: float | None = None) -> list[Event]:
@@ -148,6 +153,9 @@ def parse_subject(subject: str, face_value: float | None = None) -> list[Event]:
                 events.append(Event("dividend", amount=amount))
     if "demerger" in low or "spin off" in low or "spin-off" in low:
         events.append(Event("demerger"))
+    elif not events and any(k in low for k in _SCHEME_WORDS):
+        # (a scheme that is only a bonus/split was already captured above)
+        events.append(Event("scheme_of_arrangement"))
     if "capital reduction" in low or "reduction of capital" in low:
         events.append(Event("capital_reduction"))
     return events

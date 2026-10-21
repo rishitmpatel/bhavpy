@@ -163,3 +163,53 @@ def test_feed_failure_turns_on_inference() -> None:
     empty.attrs["feed_ok"] = False
     ev = adjust.build_events(empty, px)
     assert ev["applied"].any()
+
+
+def test_reused_ticker_records_stay_in_their_window(
+    tmp_cache: object, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import datetime as dt
+
+    from bhavpy import cache, symbols
+    from bhavpy.sources import nse_corpactions as ca_src
+
+    switch = dt.date(2020, 1, 1)
+    chain = [symbols.Segment("OLDCO", None, switch), symbols.Segment("NEWCO", switch, None)]
+    monkeypatch.setattr(symbols, "symbol_chain", lambda s: chain)
+    cache.ensure_table("corp_actions", adjust._CA_DDL)
+    rows = pd.DataFrame(
+        [
+            ["OLDCO", "EQ", None, "Old Co", "2018-05-01", None, 10.0, "Bonus 1:1"],
+            ["OLDCO", "EQ", None, "Another Co", "2023-05-01", None, 10.0, "Bonus 1:1"],  # ticker reused
+            ["NEWCO", "EQ", None, "Old Co", "2021-05-01", None, 10.0, "Bonus 1:2"],
+        ],
+        columns=list(ca_src.COLUMNS),
+    )
+    cache.write_frame("corp_actions", rows, ca_src.COLUMNS)
+    for s in ("OLDCO", "NEWCO"):
+        cache.blob_put(f"corp_actions_fetched:{s}", b"1")
+    got = adjust.corporate_actions("NEWCO")
+    assert got["ex_date"].tolist() == ["2018-05-01", "2021-05-01"]
+
+
+def test_split_and_bonus_on_same_ex_date_are_checked_together() -> None:
+    # BAJFINANCE 2025-06-16: bonus 4:1 and split FV 2 -> 1 on one day (combined factor 0.1).
+    px = prices("BAJFINANCE", "2025-06-09", "2025-06-20")
+    events = adjust.build_events(actions("BAJFINANCE"), px)
+    day = events[events["ex_date"] == pd.Timestamp("2025-06-16", tz="Asia/Kolkata")]
+    assert set(day["kind"]) == {"bonus", "split"}
+    assert day["applied"].all() and (day["check"] == "ok").all()
+    assert day["price_factor"].prod() == pytest.approx(0.1)
+    out = adjust.apply(px, events[(events["ex_date"] > px.index[0]) & (events["ex_date"] <= px.index[-1])])
+    assert max_abs_return(out["adj_close"]) < 0.08
+
+
+def test_demerger_is_estimated_from_price_discovery() -> None:
+    # RELIANCE 2023-07-20, Jio Financial Services demerger: special pre-open discovered 2,580.
+    px = prices("RELIANCE", "2023-07-14", "2023-07-26")
+    events = adjust.build_events(actions("RELIANCE"), px)
+    dm = events[events["kind"] == "demerger"].iloc[0]
+    assert dm["check"] == "estimated" and dm["applied"]
+    assert dm["price_factor"] == pytest.approx(2580.0 / 2841.85)
+    ignored = adjust.build_events(actions("RELIANCE"), px, demerger="ignore")
+    assert ignored.loc[ignored["kind"] == "demerger", "check"].iloc[0] == "not_adjusted"

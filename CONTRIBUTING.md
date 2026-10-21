@@ -63,7 +63,5 @@ public function in the relevant module.
 
 ## Releasing (maintainers)
 
-1. Bump `src/bhavpy/_version.py` and add a CHANGELOG entry.
-2. Either push a tag `vX.Y.Z`, **or** open *Actions → release → Run workflow* and type
-   the tag. The workflow checks the version matches, builds, publishes to PyPI with
-   trusted publishing and creates the GitHub release.
+See [RELEASING.md](RELEASING.md): one-time PyPI trusted-publisher setup, then either push a
+`vX.Y.Z` tag or use *Actions → release → Run workflow*.
